@@ -54,6 +54,34 @@ struct ContentView: View {
     .sheet(isPresented: $modalIsPresented) {
       NewTaskView(taskStore: self.taskStore)
     }
+    .onAppear() {
+      self.loadJSON()
+    }
+  }
+  
+  private func loadJSON(){
+    //Files Location
+    guard let taskJSONURL = Bundle.main.url(forResource: "Task",
+                                         withExtension: "json"),
+          let prioritizedTaskJSONURL = Bundle.main.url(forResource: "PrioritizedTask",
+                                                withExtension: "json") else { return }
+    
+    //set the converter
+    let decoder = JSONDecoder()
+    
+    do {
+      //get file
+      let taskData = try Data(contentsOf: taskJSONURL)
+      //set the file to format
+      let task = try decoder.decode(Task.self, from: taskData)
+      print(task)
+      
+      let prioritizedTaskData = try Data(contentsOf: prioritizedTaskJSONURL)
+      let prioritizedTask = try decoder.decode(TaskStore.PrioritizedTasks.self, from: prioritizedTaskData)
+      print(prioritizedTask)
+    } catch {
+      print(error)
+    }
   }
 }
 
